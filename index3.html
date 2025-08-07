@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindShare - Partagez vos idées</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#121212',
+                            card: '#1e1e1e',
+                            text: '#e0e0e0',
+                            accent: '#bb86fc'
+                        },
+                        light: {
+                            bg: '#ffffff',
+                            card: '#f5f5f5',
+                            text: '#333333',
+                            accent: '#6200ee'
+                        },
+                        neon: {
+                            bg: '#000000',
+                            card: '#1a1a2e',
+                            text: '#00ffcc',
+                            accent: '#ff00ff'
+                        },
+                        hacker: {
+                            bg: '#0a0a0a',
+                            card: '#0d0208',
+                            text: '#00ff41',
+                            accent: '#008f11'
+                        },
+                        retro: {
+                            bg: '#f0e6d2',
+                            card: '#e6d2b5',
+                            text: '#5a3e2b',
+                            accent: '#d4af37'
+                        },
+                        monochrome: {
+                            bg: '#ffffff',
+                            card: '#f0f0f0',
+                            text: '#000000',
+                            accent: '#808080'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --card-color: #f5f5f5;
+            --text-color: #333333;
+            --accent-color: #6200ee;
+        }
+        
+        .theme-dark {
+            --bg-color: #121212;
+            --card-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #bb86fc;
+        }
+        
+        .theme-neon {
+            --bg-color: #000000;
+            --card-color: #1a1a2e;
+            --text-color: #00ffcc;
+            --accent-color: #ff00ff;
+        }
+        
+        .theme-hacker {
+            --bg-color: #0a0a0a;
+            --card-color: #0d0208;
+            --text-color: #00ff41;
+            --accent-color: #008f11;
+        }
+        
+        .theme-retro {
+            --bg-color: #f0e6d2;
+            --card-color: #e6d2b5;
+            --text-color: #5a3e2b;
+            --accent-color: #d4af37;
+        }
+        
+        .theme-monochrome {
+            --bg-color: #ffffff;
+            --card-color: #f0f0f0;
+            --text-color: #000000;
+            --accent-color: #808080;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .card {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            background: transparent;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .like-btn.active {
+            color: #ff4757;
+        }
+        
+        .nav-link.active {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .theme-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 5px 0;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-option:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .hamburger-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .menu-content {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background-color: var(--card-color);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 999;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .menu-content.active {
+            right: 0;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        .nav-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--card-color);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+        
+        @media (min-width: 768px) {
+            .nav-bottom {
+                display: none;
+            }
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .post-content {
+            white-space: pre-wrap;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            background-color: #4caf50;
+        }
+        
+        .toast.error {
+            background-color: #f44336;
+        }
+        
+        .toast.info {
+            background-color: #2196f3;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        .search-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .delete-btn {
+            color: #ff4757;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .delete-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .auth-container h2 {
+            margin-bottom: 1.5rem;
+        }
+        
+        .auth-container p {
+            margin-bottom: 1.5rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu">
+        <button id="menu-toggle" class="btn-primary">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <!-- Menu Overlay -->
+    <div id="overlay" class="overlay"></div>
+    
+    <!-- Menu Content -->
+    <div id="menu-content" class="menu-content">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">Paramètres</h2>
+            <button id="menu-close" class="text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="mb-6">
+            <h3 class="font-bold mb-3">Thèmes</h3>
+            <div id="theme-options">
+                <div class="theme-option" data-theme="light">
+                    <i class="fas fa-sun mr-2"></i> Light
+                </div>
+                <div class="theme-option" data-theme="dark">
+                    <i class="fas fa-moon mr-2"></i> Dark
+                </div>
+                <div class="theme-option" data-theme="neon">
+                    <i class="fas fa-lightbulb mr-2"></i> Neon
+                </div>
+                <div class="theme-option" data-theme="hacker">
+                    <i class="fas fa-terminal mr-2"></i> Hacker
+                </div>
+                <div class="theme-option" data-theme="retro">
+                    <i class="fas fa-record-vinyl mr-2"></i> Retro
+                </div>
+                <div class="theme-option" data-theme="monochrome">
+                    <i class="fas fa-circle mr-2"></i> Monochrome
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-6">
+            <h3 class="font-bold mb-3">Support</h3>
+            <a href="https://ko-fi.com/karlito08" target="_blank" class="flex items-center p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+                <img src="https://storage.ko-fi.com/cdn/brandasset/kofi_s_logo_nolabel.png" alt="Ko-fi" class="w-8 h-8 mr-3">
+                <span>Soutenir sur Ko-fi</span>
+            </a>
+        </div>
+        
+        <div class="mt-8">
+            <button id="logout-btn" class="btn-outline w-full">
+                <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+            </button>
+        </div>
+    </div>
+    
+    <!-- Navigation (Desktop) -->
+    <nav class="hidden md:flex justify-between items-center p-6 max-w-6xl mx-auto">
+        <div class="text-2xl font-bold">
+            <i class="fas fa-brain mr-2"></i>MindShare
+        </div>
+        <div class="flex space-x-6">
+            <a href="#" class="nav-link active" data-page="home">
+                <i class="fas fa-home mr-1"></i> Accueil
+            </a>
+            <a href="#" class="nav-link" data-page="create">
+                <i class="fas fa-plus-circle mr-1"></i> Créer
+            </a>
+            <a href="#" class="nav-link" data-page="profile">
+                <i class="fas fa-user mr-1"></i> Profil
+            </a>
+        </div>
+        <div>
+            <button id="desktop-menu-toggle" class="btn-primary">
+                <i class="fas fa-cog mr-2"></i> Paramètres
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Auth Container -->
+    <div id="auth-container" class="auth-container">
+        <h2 class="text-3xl font-bold">Bienvenue sur MindShare</h2>
+        <p>Connectez-vous pour partager vos idées, citations, recettes et poésies avec la communauté</p>
+        <button id="google-login-btn" class="btn-primary flex items-center justify-center mx-auto">
+            <i class="fab fa-google mr-2"></i> Se connecter avec Google
+        </button>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto p-4 md:p-6">
+        <!-- Home Section -->
+        <section id="home" class="content-section">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Rechercher des publications ou des utilisateurs...">
+            </div>
+            
+            <h1 class="text-3xl font-bold mb-6">Dernières publications</h1>
+            
+            <div id="posts-container">
+                <!-- Posts will be loaded here -->
+            </div>
+            
+            <div id="no-posts" class="text-center py-10 hidden">
+                <i class="fas fa-inbox text-5xl mb-4"></i>
+                <p class="text-xl">Aucune publication trouvée</p>
+                <p class="mt-2">Soyez le premier à partager une idée !</p>
+            </div>
+        </section>
+        
+        <!-- Create Section -->
+        <section id="create" class="content-section">
+            <h1 class="text-3xl font-bold mb-6">Créer une publication</h1>
+            
+            <div class="card p-6 mb-6">
+                <div class="mb-4">
+                    <label class="block mb-2 font-medium">Type de publication</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="btn-outline type-btn active" data-type="citation">Citation</button>
+                        <button class="btn-outline type-btn" data-type="recette">Recette</button>
+                        <button class="btn-outline type-btn" data-type="poesie">Poésie</button>
+                        <button class="btn-outline type-btn" data-type="idee">Idée</button>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="post-title" class="block mb-2 font-medium">Titre</label>
+                    <input type="text" id="post-title" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Donnez un titre à votre publication">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="post-content" class="block mb-2 font-medium">Contenu</label>
+                    <textarea id="post-content" rows="6" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Partagez votre idée, citation, recette ou poésie..."></textarea>
+                </div>
+                
+                <button id="publish-btn" class="btn-primary w-full">
+                    <i class="fas fa-paper-plane mr-2"></i> Publier
+                </button>
+            </div>
+        </section>
+        
+        <!-- Profile Section -->
+        <section id="profile" class="content-section">
+            <h1 class="text-3xl font-bold mb-6">Votre profil</h1>
+            
+            <div class="card p-6 mb-6">
+                <div class="flex items-center mb-6">
+                    <div class="user-avatar mr-4" id="profile-avatar">U</div>
+                    <div>
+                        <h2 class="text-xl font-bold" id="profile-name">Utilisateur Anonyme</h2>
+                        <p class="text-gray-500" id="profile-email">-</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="card p-4 text-center">
+                        <div class="text-2xl font-bold" id="profile-posts-count">0</div>
+                        <div>Publications</div>
+                    </div>
+                    <div class="card p-4 text-center">
+                        <div class="text-2xl font-bold" id="profile-likes-count">0</div>
+                        <div>Likes reçus</div>
+                    </div>
+                    <div class="card p-4 text-center">
+                        <div class="text-2xl font-bold" id="profile-comments-count">0</div>
+                        <div>Commentaires</div>
+                    </div>
+                </div>
+                
+                <h3 class="font-bold mb-3">Vos dernières publications</h3>
+                <div id="user-posts">
+                    <!-- User posts will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="nav-bottom md:hidden">
+        <a href="#" class="nav-link active text-center" data-page="home">
+            <i class="fas fa-home text-xl"></i>
+            <div class="text-xs mt-1">Accueil</div>
+        </a>
+        <a href="#" class="nav-link text-center" data-page="create">
+            <i class="fas fa-plus-circle text-xl"></i>
+            <div class="text-xs mt-1">Créer</div>
+        </a>
+        <a href="#" class="nav-link text-center" data-page="profile">
+            <i class="fas fa-user text-xl"></i>
+            <div class="text-xs mt-1">Profil</div>
+        </a>
+    </nav>
+    
+    <script>
+        // Configuration de Supabase
+        const SUPABASE_URL = 'https://qbmteqbkpwhgbiwnclcy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFibXRlcWJrcHdoZ2Jpd25jbGN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0OTU3MTEsImV4cCI6MjA3MDA3MTcxMX0.Ho9hnv4ouV7YvaFZw3N8doJQ_B98EIXdDvUGcOG4NiA';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // États de l'application
+        let currentUser = null;
+        let currentTheme = 'light';
+        let currentType = 'citation';
+        let posts = [];
+        let userPosts = [];
+        
+        // DOM Elements
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuClose = document.getElementById('menu-close');
+        const desktopMenuToggle = document.getElementById('desktop-menu-toggle');
+        const menuContent = document.getElementById('menu-content');
+        const overlay = document.getElementById('overlay');
+        const logoutBtn = document.getElementById('logout-btn');
+        const themeOptions = document.querySelectorAll('.theme-option');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const typeButtons = document.querySelectorAll('.type-btn');
+        const publishBtn = document.getElementById('publish-btn');
+        const postTitle = document.getElementById('post-title');
+        const postContent = document.getElementById('post-content');
+        const postsContainer = document.getElementById('posts-container');
+        const userPostsContainer = document.getElementById('user-posts');
+        const noPostsMessage = document.getElementById('no-posts');
+        const authContainer = document.getElementById('auth-container');
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        const searchInput = document.getElementById('search-input');
+        const toast = document.getElementById('toast');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profilePostsCount = document.getElementById('profile-posts-count');
+        const profileLikesCount = document.getElementById('profile-likes-count');
+        const profileCommentsCount = document.getElementById('profile-comments-count');
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            checkUserSession();
+            setupEventListeners();
+        });
+        
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Navigation entre les sections
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = link.getAttribute('data-page');
+                    showPage(page);
+                });
+            });
+            
+            // Menu hamburger
+            menuToggle.addEventListener('click', toggleMenu);
+            menuClose.addEventListener('click', toggleMenu);
+            desktopMenuToggle.addEventListener('click', toggleMenu);
+            overlay.addEventListener('click', toggleMenu);
+            
+            // Changement de thème
+            themeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const theme = option.getAttribute('data-theme');
+                    changeTheme(theme);
+                });
+            });
+            
+            // Changement de type de publication
+            typeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    typeButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    currentType = button.getAttribute('data-type');
+                });
+            });
+            
+            // Publication d'un post
+            publishBtn.addEventListener('click', publishPost);
+            
+            // Déconnexion
+            logoutBtn.addEventListener('click', logout);
+            
+            // Authentification Google
+            googleLoginBtn.addEventListener('click', loginWithGoogle);
+            
+            // Recherche
+            searchInput.addEventListener('input', debounce(searchPosts, 300));
+        }
+        
+        // Afficher une page spécifique
+        function showPage(page) {
+            // Masquer toutes les sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Afficher la section demandée
+            document.getElementById(page).classList.add('active');
+            
+            // Mettre à jour les liens de navigation
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === page) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Si on est sur la page de profil, charger les posts de l'utilisateur
+            if (page === 'profile') {
+                loadUserProfile();
+            }
+        }
+        
+        // Basculer l'affichage du menu
+        function toggleMenu() {
+            menuContent.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        // Changer le thème
+        function changeTheme(theme) {
+            document.body.className = `theme-${theme}`;
+            currentTheme = theme;
+            localStorage.setItem('mindshare-theme', theme);
+        }
+        
+        // Charger le thème sauvegardé
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('mindshare-theme') || 'light';
+            changeTheme(savedTheme);
+        }
+        
+        // Vérifier la session utilisateur
+        async function checkUserSession() {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                currentUser = user;
+                showMainContent();
+                loadPosts();
+            } else {
+                showAuthPage();
+            }
+        }
+        
+        // Afficher la page d'authentification
+        function showAuthPage() {
+            authContainer.classList.remove('hidden');
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+        }
+        
+        // Afficher le contenu principal
+        function showMainContent() {
+            authContainer.classList.add('hidden');
+            showPage('home');
+        }
+        
+        // Connexion avec Google
+        async function loginWithGoogle() {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+            
+            if (error) {
+                showToast('Erreur de connexion', 'error');
+                console.error('Erreur de connexion:', error.message);
+            }
+        }
+        
+        // Déconnexion
+        async function logout() {
+            const { error } = await supabase.auth.signOut();
+            
+            if (error) {
+                showToast('Erreur lors de la déconnexion', 'error');
+                console.error('Erreur de déconnexion:', error.message);
+            } else {
+                currentUser = null;
+                showToast('Déconnexion réussie', 'success');
+                showAuthPage();
+            }
+        }
+        
+        // Publication d'un post
+        async function publishPost() {
+            const title = postTitle.value.trim();
+            const content = postContent.value.trim();
+            
+            if (!title || !content) {
+                showToast('Veuillez remplir tous les champs', 'error');
+                return;
+            }
+            
+            // Publier le post dans Supabase
+            const { data, error } = await supabase
+                .from('posts')
+                .insert([
+                    {
+                        title,
+                        content,
+                        type: currentType,
+                        user_id: currentUser.id,
+                        author_name: currentUser.user_metadata.full_name,
+                        author_avatar: currentUser.user_metadata.avatar_url
+                    }
+                ]);
+            
+            if (error) {
+                showToast('Erreur lors de la publication', 'error');
+                console.error('Erreur de publication:', error.message);
+            } else {
+                showToast('Publication réussie !', 'success');
+                
+                // Réinitialiser le formulaire
+                postTitle.value = '';
+                postContent.value = '';
+                
+                // Recharger les posts
+                loadPosts();
+                showPage('home');
+            }
+        }
+        
+        // Charger les posts
+        async function loadPosts() {
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                showToast('Erreur lors du chargement des publications', 'error');
+                console.error('Erreur de chargement:', error.message);
+                return;
+            }
+            
+            posts = data;
+            renderPosts(posts, postsContainer);
+            
+            // Afficher le message si aucun post
+            if (posts.length === 0) {
+                noPostsMessage.classList.remove('hidden');
+            } else {
+                noPostsMessage.classList.add('hidden');
+            }
+        }
+        
+        // Charger le profil utilisateur
+        async function loadUserProfile() {
+            if (!currentUser) return;
+            
+            // Mettre à jour les informations du profil
+            profileName.textContent = currentUser.user_metadata.full_name || 'Utilisateur';
+            profileEmail.textContent = currentUser.email;
+            profileAvatar.textContent = currentUser.user_metadata.full_name 
+                ? currentUser.user_metadata.full_name.charAt(0) 
+                : 'U';
+            
+            // Charger les posts de l'utilisateur
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                showToast('Erreur lors du chargement de votre profil', 'error');
+                console.error('Erreur de profil:', error.message);
+                return;
+            }
+            
+            userPosts = data;
+            renderPosts(userPosts, userPostsContainer);
+            
+            // Mettre à jour les compteurs
+            profilePostsCount.textContent = userPosts.length;
+            profileLikesCount.textContent = userPosts.reduce((sum, post) => sum + (post.likes || 0), 0);
+            profileCommentsCount.textContent = userPosts.reduce((sum, post) => sum + (post.comments || 0), 0);
+        }
+        
+        // Rendu des posts
+        function renderPosts(postsArray, container) {
+            container.innerHTML = '';
+            
+            if (postsArray.length === 0) {
+                container.innerHTML = '<p class="text-center py-4">Aucune publication trouvée</p>';
+                return;
+            }
+            
+            postsArray.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'card p-5';
+                postElement.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center">
+                            <div class="user-avatar mr-3">${post.author_name ? post.author_name.charAt(0) : 'U'}</div>
+                            <div>
+                                <div class="font-bold">${post.author_name || 'Utilisateur'}</div>
+                                <div class="text-sm text-gray-500">${formatDate(post.created_at)}</div>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${
+                            post.type === 'citation' ? 'bg-blue-100 text-blue-800' :
+                            post.type === 'recette' ? 'bg-green-100 text-green-800' :
+                            post.type === 'poesie' ? 'bg-purple-100 text-purple-800' :
+                            'bg-yellow-100 text-yellow-800'
+                        }">
+                            ${post.type.charAt(0).toUpperCase() + post.type.slice(1)}
+                        </span>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold mb-2">${post.title}</h3>
+                    <div class="post-content mb-4">${post.content}</div>
+                    
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-4">
+                            <button class="like-btn flex items-center text-gray-500 hover:text-red-500" data-id="${post.id}">
+                                <i class="fas fa-heart mr-1"></i> 
+                                <span>${post.likes || 0}</span>
+                            </button>
+                            <button class="flex items-center text-gray-500 hover:text-blue-500">
+                                <i class="fas fa-comment mr-1"></i> 
+                                <span>${post.comments || 0}</span>
+                            </button>
+                        </div>
+                        ${post.user_id === currentUser.id ? 
+                            `<button class="delete-btn" data-id="${post.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>` : ''}
+                    </div>
+                `;
+                
+                container.appendChild(postElement);
+            });
+            
+            // Ajouter les événements aux boutons
+            document.querySelectorAll('.like-btn').forEach(button => {
+                button.addEventListener('click', toggleLike);
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', deletePost);
+            });
+        }
+        
+        // Basculer le like d'un post
+        async function toggleLike(e) {
+            const button = e.currentTarget;
+            const postId = button.getAttribute('data-id');
+            const countElement = button.querySelector('span');
+            let count = parseInt(countElement.textContent);
+            
+            // Vérifier si l'utilisateur a déjà liké ce post
+            const { data: existingLike, error: likeError } = await supabase
+                .from('likes')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .eq('post_id', postId)
+                .single();
+            
+            if (likeError && likeError.code !== 'PGRST116') {
+                console.error('Erreur de vérification du like:', likeError.message);
+                return;
+            }
+            
+            if (existingLike) {
+                // Supprimer le like
+                const { error } = await supabase
+                    .from('likes')
+                    .delete()
+                    .eq('id', existingLike.id);
+                
+                if (error) {
+                    showToast('Erreur lors de la suppression du like', 'error');
+                    console.error('Erreur de suppression du like:', error.message);
+                    return;
+                }
+                
+                button.classList.remove('active');
+                count--;
+                countElement.textContent = count;
+                
+                // Mettre à jour le compteur dans la base de données
+                await supabase
+                    .from('posts')
+                    .update({ likes: count })
+                    .eq('id', postId);
+            } else {
+                // Ajouter le like
+                const { error } = await supabase
+                    .from('likes')
+                    .insert([
+                        {
+                            user_id: currentUser.id,
+                            post_id: postId
+                        }
+                    ]);
+                
+                if (error) {
+                    showToast('Erreur lors de l\'ajout du like', 'error');
+                    console.error('Erreur d\'ajout du like:', error.message);
+                    return;
+                }
+                
+                button.classList.add('active');
+                count++;
+                countElement.textContent = count;
+                
+                // Mettre à jour le compteur dans la base de données
+                await supabase
+                    .from('posts')
+                    .update({ likes: count })
+                    .eq('id', postId);
+            }
+        }
+        
+        // Supprimer un post
+        async function deletePost(e) {
+            const postId = e.currentTarget.getAttribute('data-id');
+            
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette publication ?')) {
+                return;
+            }
+            
+            // Supprimer le post de la base de données
+            const { error } = await supabase
+                .from('posts')
+                .delete()
+                .eq('id', postId);
+            
+            if (error) {
+                showToast('Erreur lors de la suppression', 'error');
+                console.error('Erreur de suppression:', error.message);
+            } else {
+                showToast('Publication supprimée', 'success');
+                loadPosts();
+                loadUserProfile();
+            }
+        }
+        
+        // Rechercher des posts
+        async function searchPosts() {
+            const query = searchInput.value.trim().toLowerCase();
+            
+            if (query.length < 2) {
+                loadPosts();
+                return;
+            }
+            
+            const { data, error } = await supabase
+                .from('posts')
+                .select('*')
+                .or(`title.ilike.%${query}%,content.ilike.%${query}%,author_name.ilike.%${query}%`)
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                showToast('Erreur lors de la recherche', 'error');
+                console.error('Erreur de recherche:', error.message);
+                return;
+            }
+            
+            renderPosts(data, postsContainer);
+        }
+        
+        // Formater la date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffMinutes = Math.floor(diffTime / (1000 * 60));
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffMinutes < 1) return "À l'instant";
+            if (diffMinutes < 60) return `Il y a ${diffMinutes} minute${diffMinutes > 1 ? 's' : ''}`;
+            if (diffHours < 24) return `Il y a ${diffHours} heure${diffHours > 1 ? 's' : ''}`;
+            if (diffDays < 7) return `Il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`;
+            
+            return date.toLocaleDateString('fr-FR');
+        }
+        
+        // Afficher un toast
+        function showToast(message, type = 'info') {
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Fonction debounce pour limiter les appels à la recherche
+        function debounce(func, delay) {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+    </script>
+</body>
+</html>
