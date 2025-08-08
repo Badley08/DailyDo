@@ -2,7 +2,7 @@
   "name": "DailyDo - To-Do List",
   "short_name": "DailyDo",
   "description": "Une application de liste de tâches quotidienne simple et efficace.",
-  "start_url": "/index.html",
+  "start_url": "DailyDo/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4a6fa5",
