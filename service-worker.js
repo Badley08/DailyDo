@@ -2,14 +2,14 @@
 
 const CACHE_NAME = 'dailydo-cache-v1.1'; // Incrémentez le numéro de version pour forcer le rafraîchissement du cache
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/script.js',
-  '/app.js',
+  '/DailyDo',
+  '/DailyDo/index.html',
+  '/DailyDo/styles.css',
+  '/DailyDo/script.js',
+  '/DailyDo/app.js',
   // Ajoutez ici les chemins vers vos icônes si elles sont locales et que vous voulez les mettre en cache
-  '/secretary.png',
-  '/secretary.png',
+  '/DailyDo/secretary.png',
+  '/DailyDo/secretary.png',
 ];
 
 // Installation du Service Worker
