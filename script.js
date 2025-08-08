@@ -318,7 +318,7 @@ const DailyDoApp = (function () {
         if (domElements.notesSection) domElements.notesSection.classList.add('hidden');
         if (domElements.themesSection) domElements.themesSection.classList.add('hidden');
         // Ici, on pourrait ouvrir une modale de paramètres
-        showToast('Paramètres (à implémenter)', 'info');
+        showToast('Fonctionnalitée (indisponible)', 'info');
         if (domElements.sideMenu) domElements.sideMenu.classList.remove('open');
     }
 
