@@ -7,7 +7,7 @@
   "background_color": "#ffffff",
   "theme_color": "#4a6fa5",
   "lang": "fr",
-  "scope": "/",
+  "scope": "/DailyDo/",
   "icons": [
     {
       "src": "icons/icon-192x192.png",
