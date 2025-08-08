@@ -1,0 +1,660 @@
+/* styles.css */
+
+/* === Variables CSS pour les thèmes === */
+:root {
+  /* Thème par défaut (Light) */
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --header-bg: #4a6fa5;
+  --header-text: #ffffff;
+  --task-bg: #f5f5f5;
+  --task-border: #e0e0e0;
+  --input-bg: #ffffff;
+  --input-border: #cccccc;
+  --button-bg: #4a6fa5;
+  --button-hover: #3a5a80;
+  --button-text: #ffffff;
+  --accent-color: #ff6b6b;
+  --priority-color: #ff4757;
+  --completed-color: #2ed573;
+  --menu-bg: #ffffff;
+  --menu-shadow: rgba(0, 0, 0, 0.1);
+  --toast-bg: #333333;
+  --toast-text: #ffffff;
+  --search-icon-color: #999999;
+}
+
+/* === Thème Dark === */
+[data-theme="dark"] {
+  --bg-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --header-bg: #252526;
+  --header-text: #cccccc;
+  --task-bg: #2d2d30;
+  --task-border: #3f3f46;
+  --input-bg: #333333;
+  --input-border: #555555;
+  --button-bg: #444444;
+  --button-hover: #555555;
+  --button-text: #ffffff;
+  --accent-color: #bb86fc;
+  --priority-color: #cf6679;
+  --completed-color: #03dac6;
+  --menu-bg: #2d2d30;
+  --menu-shadow: rgba(0, 0, 0, 0.3);
+  --toast-bg: #333333;
+  --toast-text: #ffffff;
+  --search-icon-color: #aaaaaa;
+}
+
+/* === Thème Neon === */
+[data-theme="neon"] {
+  --bg-color: #000000;
+  --text-color: #00ffea;
+  --header-bg: #001f1f;
+  --header-text: #00ffea;
+  --task-bg: #002b2b;
+  --task-border: #00ffea;
+  --input-bg: #001a1a;
+  --input-border: #00ffea;
+  --button-bg: #00ffea;
+  --button-hover: #00ccbb;
+  --button-text: #000000;
+  --accent-color: #ff00ff;
+  --priority-color: #ff5555;
+  --completed-color: #55ff55;
+  --menu-bg: #001a1a;
+  --menu-shadow: rgba(0, 255, 234, 0.2);
+  --toast-bg: #001a1a;
+  --toast-text: #00ffea;
+  --search-icon-color: #00ffea;
+}
+
+/* === Thème Hacker === */
+[data-theme="hacker"] {
+  --bg-color: #0a0a0a;
+  --text-color: #00ff00;
+  --header-bg: #001a00;
+  --header-text: #00ff00;
+  --task-bg: #002200;
+  --task-border: #008800;
+  --input-bg: #001100;
+  --input-border: #00aa00;
+  --button-bg: #005500;
+  --button-hover: #007700;
+  --button-text: #00ff00;
+  --accent-color: #00ff00;
+  --priority-color: #ffff00; /* Jaune pour contraste */
+  --completed-color: #008800;
+  --menu-bg: #001100;
+  --menu-shadow: rgba(0, 255, 0, 0.1);
+  --toast-bg: #002200;
+  --toast-text: #00ff00;
+  --search-icon-color: #00aa00;
+}
+
+/* === Thème Retro === */
+[data-theme="retro"] {
+  --bg-color: #f5f5dc; /* Papier羊皮纸 */
+  --text-color: #8b4513; /* Marron selle */
+  --header-bg: #8b0000; /* Rouge foncé */
+  --header-text: #f5deb3; /* Blé */
+  --task-bg: #fdf5e6; /* Blanc antique */
+  --task-border: #d2b48c; /* Tannée */
+  --input-bg: #fff8dc; /* Maïs */
+  --input-border: #bc8f8f; /* RosyBrown */
+  --button-bg: #a0522d; /* Sienna */
+  --button-hover: #8b4513; /* SaddleBrown */
+  --button-text: #f5deb3; /* Blé */
+  --accent-color: #daa520; /* Or terni */
+  --priority-color: #cd5c5c; /* IndianRed */
+  --completed-color: #556b2f; /* OliveDrab foncé */
+  --menu-bg: #fdf5e6;
+  --menu-shadow: rgba(139, 69, 19, 0.2);
+  --toast-bg: #8b4513;
+  --toast-text: #f5deb3;
+  --search-icon-color: #a0522d;
+}
+
+/* === Thème Monochrome === */
+[data-theme="monochrome"] {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --header-bg: #000000;
+  --header-text: #ffffff;
+  --task-bg: #f0f0f0;
+  --task-border: #cccccc;
+  --input-bg: #ffffff;
+  --input-border: #999999;
+  --button-bg: #333333;
+  --button-hover: #555555;
+  --button-text: #ffffff;
+  --accent-color: #666666;
+  --priority-color: #333333;
+  --completed-color: #999999;
+  --menu-bg: #ffffff;
+  --menu-shadow: rgba(0, 0, 0, 0.1);
+  --toast-bg: #333333;
+  --toast-text: #ffffff;
+  --search-icon-color: #666666;
+}
+
+/* === Thème Royal === */
+[data-theme="royal"] {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --header-bg: #1a1a1a;
+  --header-text: #ffd700; /* Or */
+  --task-bg: #111111;
+  --task-border: #333333;
+  --input-bg: #222222;
+  --input-border: #444444;
+  --button-bg: #333333;
+  --button-hover: #444444;
+  --button-text: #ffd700;
+  --accent-color: #ffd700;
+  --priority-color: #ff4500; /* OrangeRed */
+  --completed-color: #32cd32; /* LimeGreen */
+  --menu-bg: #111111;
+  --menu-shadow: rgba(255, 215, 0, 0.1);
+  --toast-bg: #222222;
+  --toast-text: #ffd700;
+  --search-icon-color: #ffd700;
+}
+
+
+/* === Styles Globaux === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--bg-color);
+  border-radius: 10px;
+  box-shadow: 0 0 15px var(--menu-shadow);
+}
+
+/* === En-tête === */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+#user-greeting {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.hamburger {
+  background: none;
+  border: none;
+  color: var(--header-text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.hamburger:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* === Menu Hamburger === */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -300px; /* Caché par défaut */
+  width: 280px;
+  height: 100%;
+  background-color: var(--menu-bg);
+  box-shadow: 2px 0 5px var(--menu-shadow);
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  padding-top: 60px;
+}
+
+.side-menu.open {
+  left: 0;
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.side-menu li {
+  border-bottom: 1px solid var(--task-border);
+}
+
+.side-menu a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+}
+
+.side-menu a:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.side-menu a i {
+  margin-right: 15px;
+  width: 20px;
+  text-align: center;
+}
+
+/* === Styles pour le Pseudo dans le Menu === */
+.menu-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--task-border);
+}
+
+.menu-header h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+.pseudo-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pseudo-container label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+#pseudo-input {
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.btn-small {
+    padding: 6px 10px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.3s;
+    align-self: flex-start; /* Pour aligner le bouton à gauche sous l'input */
+}
+
+.btn-small:hover {
+    background-color: var(--button-hover);
+}
+
+/* === Zone de Recherche === */
+.search-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+#search-input {
+  width: 100%;
+  padding: 12px 15px 12px 40px;
+  border: 1px solid var(--input-border);
+  border-radius: 25px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--search-icon-color);
+}
+
+
+/* === Formulaire d'Ajout de Tâche === */
+#task-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: var(--task-bg);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--task-border);
+}
+
+#task-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+#task-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+#deadline-input {
+  padding: 12px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+#task-form button {
+  padding: 12px 20px;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+#task-form button:hover {
+    background-color: var(--button-hover);
+}
+
+#task-form button i {
+    margin-right: 5px;
+}
+
+/* === Liste des Tâches === */
+#task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.task-item {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: var(--task-bg);
+  border: 1px solid var(--task-border);
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative; /* Pour le bouton de sauvegarde */
+}
+
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--menu-shadow);
+}
+
+.task-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.task-checkbox {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.task-text {
+    flex: 1;
+    font-size: 1.1rem;
+    word-break: break-word;
+}
+
+.task-text.completed {
+    text-decoration: line-through;
+    color: var(--completed-color);
+}
+
+.task-priority {
+    color: var(--priority-color);
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.task-deadline {
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    margin-left: auto; /* Pousse à droite */
+}
+
+.task-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.task-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.task-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--accent-color);
+}
+
+.task-btn.edit-btn:hover {
+    color: #4a90e2; /* Bleu pour édition */
+}
+
+.task-btn.delete-btn:hover {
+    color: #e74c3c; /* Rouge pour suppression */
+}
+
+.task-btn.save-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.task-item:hover .task-btn.save-btn {
+    opacity: 1;
+}
+
+
+/* === Sections (Notes, Thèmes) === */
+section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: var(--task-bg);
+    border-radius: 8px;
+    border: 1px solid var(--task-border);
+}
+
+section h2 {
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+#notes-textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 15px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+/* === Styles pour le Bouton Sauvegarder Notes === */
+.btn-save {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espace entre l'icône et le texte */
+}
+
+.btn-save:hover {
+    background-color: var(--button-hover);
+}
+
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.theme-btn {
+    padding: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.theme-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 5px var(--menu-shadow);
+}
+
+/* === Toast Notifications === */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1001;
+}
+
+.toast {
+    background-color: var(--toast-bg);
+    color: var(--toast-text);
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin-top: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    animation: slideIn 0.3s, fadeOut 0.5s 2.5s forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.toast i {
+    margin-right: 10px;
+}
+
+/* === Classes Utilitaires === */
+.hidden {
+    display: none;
+}
+
+.pinned {
+    border-left: 4px solid var(--accent-color);
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    header {
+        padding: 10px 15px;
+    }
+
+    #task-form {
+        flex-direction: column;
+    }
+
+    #task-input, #deadline-input, #task-form button {
+        width: 100%;
+    }
+
+    .theme-options {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+}
